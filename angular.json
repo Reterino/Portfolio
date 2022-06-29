@@ -30,7 +30,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/app/lib/theme/theme.scss"
             ],
             "scripts": []
           },
@@ -105,5 +105,7 @@
       }
     }
   },
-  "defaultProject": "CovidDashboard"
+  "cli": {
+    "analytics": "e64383bd-4998-482d-8562-9c3724901f6b"
+  }
 }

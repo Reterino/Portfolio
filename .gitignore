@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Tailwind
+src/app/lib/theme/tw/tailwind.dist.scss
+
+# ArcGIS Assets
+src/assets/arcgis/*
