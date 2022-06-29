@@ -1,17 +1,33 @@
-import { NgModule }     from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Routes }       from '@angular/router';
+import { NgModule }                from '@angular/core';
+import { RouterModule, Routes }    from '@angular/router';
+import { SysComponent }            from './sys/sys.component';
+import { CovidDashboardComponent } from './sys/tab/covid-dashboard/covid-dashboard.component';
+
+
+
 
 const routes: Routes = [
-
-]
-
-
+	{
+		path      : '',
+		redirectTo: 'sys',
+		pathMatch : 'full'
+	},
+	{
+		path     : 'sys',
+		component: SysComponent,
+		children: [
+			{
+				path: 'map',
+				component: CovidDashboardComponent
+			}
+		]
+	}
+];
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
-})
-export class AppRoutingModule { }
+	          imports: [
+		          RouterModule.forRoot(routes)
+	          ],
+	          exports: [ RouterModule ]
+          })
+export class AppRoutingModule {}

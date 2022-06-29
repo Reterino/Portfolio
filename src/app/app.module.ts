@@ -1,16 +1,26 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule }                from '@angular/core';
+import { BrowserModule }           from '@angular/platform-browser';
+import { AppComponent }            from './app.component';
+import { SysComponent }            from './sys/sys.component';
+import { RouterModule }            from '@angular/router';
+import { AppRoutingModule }        from './app-routing.module';
+import { CovidDashboardComponent } from './sys/tab/covid-dashboard/covid-dashboard.component';
 
-import { AppComponent } from './app.component';
+
+
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
+	          declarations: [
+		          AppComponent,
+		          SysComponent,
+		          CovidDashboardComponent
+	          ],
+	          imports     : [
+		          BrowserModule,
+		          RouterModule,
+		          AppRoutingModule
+	          ],
+	          providers   : [],
+	          bootstrap   : [ AppComponent ]
+          })
+export class AppModule {}

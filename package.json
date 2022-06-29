@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "concurrently \"npm run copy\" \"npm run twCompiler\"  \"npm run ngCompiler\"",
     "copy": "ncp ./node_modules/@arcgis/core/assets ./src/assets/arcgis",
-    "twCompiler": "tailwind -i src/app/lib/theme/tw/tailwind.scss -o src/app/lib/theme/tw/tailwind.dist.scss",
+    "twCompiler": "tailwind -i src/app/lib/theme/tw/tailwind.scss -o src/app/lib/theme/tw/tailwind.dist.scss -w",
     "ngCompiler": "ng serve --host 0.0.0.0 --port 4220",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
