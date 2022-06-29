@@ -26,6 +26,9 @@ export type BasemapType = typeof basemaps[number]
 	           styleUrls  : [ './covid-dashboard.component.scss' ]
            })
 export class CovidDashboardComponent implements OnInit, AfterViewInit {
+	public title = '<span class="font-bold pr-2">Covid Dashboard</span> Timeline 2020-2022'
+	public date = new Date();
+
 	@ViewChild('MapNode', {static: true}) public mapNode!: ElementRef;
 	public zoom: number = 4.5;
 	public center: number[] = [ 133.25, -24.25 ];
@@ -34,7 +37,9 @@ export class CovidDashboardComponent implements OnInit, AfterViewInit {
 
 	constructor(
 			private arcgisMapSvc: ArcgisMapCreationService
-	) { }
+	) {
+		setInterval(() => this.date = new Date(),250);
+	}
 
 	ngOnInit(): void {
 	}
