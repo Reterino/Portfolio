@@ -7,6 +7,8 @@ import { AppRoutingModule }        from './app-routing.module';
 import { CovidDashboardComponent } from './sys/tab/covid-dashboard/covid-dashboard.component';
 import { HttpClientModule }        from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTooltipModule }        from '@angular/material/tooltip';
+import { LibModule }               from './lib/lib.module';
 
 
 
@@ -18,11 +20,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 		          CovidDashboardComponent
 	          ],
 	          imports     : [
+		          LibModule,
 		          BrowserModule,
 		          RouterModule,
 		          AppRoutingModule,
 		          HttpClientModule,
-		          BrowserAnimationsModule
+		          BrowserAnimationsModule,
+		          MatTooltipModule
 	          ],
 	          providers   : [],
 	          bootstrap   : [ AppComponent ]

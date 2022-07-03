@@ -1,7 +1,7 @@
-import { Injectable }                                                                      from '@angular/core';
-import { HttpClient }                                                                      from '@angular/common/http';
-import { CovidByAgeDailyIntf, CovidByLocationDailyIntf, CovidTotalsDataIntf, LGAInfoIntf } from './covid-types';
-import { Papa }                                                                            from 'ngx-papaparse';
+import { EventEmitter, Injectable }                                                                                          from '@angular/core';
+import { HttpClient }                                                                                                        from '@angular/common/http';
+import { CovidByAgeDailyIntf, CovidByLocationDailyIntf, CovidDeathsIntf, CovidTotalsData, CovidTotalsDataIntf, LGAInfoIntf } from './covid-types';
+import { Papa }                                                                                                              from 'ngx-papaparse';
 
 
 
@@ -14,23 +14,9 @@ export class CovidDataLoaderService {
 	public lgaNSWInfo: LGAInfoIntf[] = [];
 	public covidByAgeData: CovidByAgeDailyIntf[] = [];
 	public covidByLocationData: CovidByLocationDailyIntf[] = [];
-	public covidTotals: CovidTotalsDataIntf = {
-		lgaTotals       : [],
-		'AgeGroup_0-19' : 0,
-		'AgeGroup_20-24': 0,
-		'AgeGroup_25-29': 0,
-		'AgeGroup_30-34': 0,
-		'AgeGroup_35-39': 0,
-		'AgeGroup_40-44': 0,
-		'AgeGroup_45-49': 0,
-		'AgeGroup_50-54': 0,
-		'AgeGroup_55-59': 0,
-		'AgeGroup_60-64': 0,
-		'AgeGroup_65-69': 0,
-		'AgeGroup_70+'  : 0,
-		'AgeGroup_None' : 0,
-		totalCases      : 0
-	};
+	public covidDeathsNSW: CovidDeathsIntf[] = [];
+	public covidTotals: CovidTotalsDataIntf = new CovidTotalsData();
+	public dataLoaded: EventEmitter<any> = new EventEmitter<any>();
 
 	constructor(
 			private http: HttpClient,
@@ -57,6 +43,9 @@ export class CovidDataLoaderService {
 		}
 		if (lga_name.includes('Parramatta')) {
 			return 'CITY OF PARRAMATTA';
+		}
+		if (lga_name.includes('Albury')) {
+			return 'ALBURY CITY';
 		}
 		return lga_name.split('(')[0].trim()
 		                             .toUpperCase();
@@ -91,12 +80,21 @@ export class CovidDataLoaderService {
 				this.parseCovidData();
 			}
 		});
+		let covidDeathsNSW = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
+		this.papa.parse(covidDeathsNSW, {
+			download: true,
+			header  : true,
+			complete: (result) => {
+				this.covidDeathsNSW = (result.data as CovidDeathsIntf[]).filter(d => d['Province/State'] === 'New South Wales');
+				this.parseCovidData();
+			}
+		});
 	}
 
 	private parseCovidData() {
 		if (this.covidByAgeData.length > 0 && this.covidByLocationData.length > 0) {
 			this.covidByAgeData.forEach(d => {
-				let keys: string[] = [
+				let keys: (keyof CovidByAgeDailyIntf)[] = [
 					'AgeGroup_0-19',
 					'AgeGroup_20-24',
 					'AgeGroup_25-29',
@@ -112,9 +110,9 @@ export class CovidDataLoaderService {
 					'AgeGroup_None'
 				];
 				keys.forEach(key => {
-					let val = Number(d[key as keyof CovidByAgeDailyIntf]);
+					let val = Number(d[key]);
 					this.covidTotals.totalCases += val;
-					//@ts-ignore
+					// @ts-ignore
 					this.covidTotals[key as keyof CovidTotalsDataIntf] += val;
 				});
 			});
@@ -129,7 +127,18 @@ export class CovidDataLoaderService {
 				} else {
 					this.covidTotals.lgaTotals[index].cases += Number(d.confirmed_cases_count);
 				}
+				let dayIndex = this.covidTotals.dailyTotals.findIndex(l => l.notification_date === d.notification_date);
+				if (dayIndex === -1) {
+					this.covidTotals.dailyTotals.push({
+						                                  notification_date: d.notification_date,
+						                                  cases            : Number(d.confirmed_cases_count)
+					                                  });
+				} else {
+					this.covidTotals.dailyTotals[dayIndex].cases += Number(d.confirmed_cases_count);
+				}
 			});
+			this.covidTotals.lgaTotals.sort((a, b) => a.lga_name19.localeCompare(b.lga_name19));
+			this.dataLoaded.emit();
 		}
 	}
 }

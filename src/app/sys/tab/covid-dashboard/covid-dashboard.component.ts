@@ -3,6 +3,8 @@ import MapView                                                     from '@arcgis
 import { ArcgisMapCreationService }                                from './lib/arcgis-map-creation.service';
 import type { BasemapType }                                        from './lib/covid-types';
 import { CovidDataLoaderService }                                  from './lib/covid-data-loader.service';
+import { CovidChartService }                                       from './lib/covid-chart.service';
+import { CovidThemeService }                                       from './lib/covid-theme.service';
 
 
 
@@ -15,19 +17,23 @@ export type { BasemapType } from './lib/covid-types';
 	           styleUrls  : [ './covid-dashboard.component.scss' ]
            })
 export class CovidDashboardComponent implements OnInit, AfterViewInit {
-	public title = '<span class="font-bold pr-2">Covid Dashboard</span> Timeline 2020-2022';
+	public title = '<span class="font-medium pr-2">Covid Dashboard</span> Timeline 2020-2022';
 	public date = new Date();
+	public dataUpdated = new Date(2022,6,3);
 
 	@ViewChild('MapNode', {static: true}) public mapNode!: ElementRef;
-	public zoom: number = 5;
-	public center: number[] = [ 147.02, -32.15 ];
+	public zoom: number = 6;
+	public center: number[] = [ 148.6, -32.65 ];
 	public basemap: BasemapType = 'dark-gray-vector';
 	private mapView!: MapView;
 
 	constructor(
 			private arcgisMapSvc: ArcgisMapCreationService,
-			private covidDataLdSvc: CovidDataLoaderService
+			private covidDataLdSvc: CovidDataLoaderService,
+			public covidChartSvc: CovidChartService,
+			private covidThemeSvc: CovidThemeService
 	) {
+		this.covidThemeSvc.start();
 		setInterval(() => this.date = new Date(), 250);
 	}
 

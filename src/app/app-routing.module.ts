@@ -19,7 +19,12 @@ const routes: Routes = [
 			{
 				path: 'map',
 				component: CovidDashboardComponent
-			}
+			},
+			{
+				path      : '',
+				redirectTo: 'map',
+				pathMatch : 'full'
+			},
 		]
 	}
 ];

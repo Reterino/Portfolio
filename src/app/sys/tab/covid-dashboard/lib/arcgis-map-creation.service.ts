@@ -17,7 +17,6 @@ import PopupTemplate              from '@arcgis/core/PopupTemplate';
 
 
 
-
 @Injectable({
 	            providedIn: 'root'
             })
@@ -50,7 +49,7 @@ export class ArcgisMapCreationService {
 					                             view: this.mapView
 				                             }), 'top-left');
 
-				await this.initStateLayer();
+				await this.initNSWLGALayer();
 
 				resolve({
 					        map: this.mapView
@@ -74,24 +73,24 @@ export class ArcgisMapCreationService {
 		}
 	}
 
-	private async initStateLayer() {
+	private async initNSWLGALayer() {
 		let renderer = new SimpleRenderer();
 		let featureLayer = new FeatureLayer({
 			                                    url          : 'https://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Administrative_Boundaries/MapServer/1',
 			                                    id           : 'NSWLayer',
 			                                    fields       : [ '*' ],
 			                                    labelsVisible: false,
-			                                    popupEnabled : false,
+			                                    popupEnabled : true,
 			                                    renderer
 		                                    });
 		featureLayer.load()
 		            .then((next: FeatureLayer) => {
-									// let fields = next.fields;
-									// let content = '';
-									// fields.forEach(d => {
-									// 	content += `${d.name}: {${d.name}} </br>`
-									// })
-			            // next.popupTemplate = new PopupTemplate({content});
+			            let fields = next.fields;
+			            let content = '';
+			            fields.forEach(d => {
+				            content += `${d.name}: {${d.name}} </br>`;
+			            });
+			            next.popupTemplate = new PopupTemplate({content});
 			            this.mapView.map.add(next);
 			            this.colorData();
 		            });
@@ -117,19 +116,15 @@ export class ArcgisMapCreationService {
 			let color = d3.interpolatePurples(scale(d.cases));
 			let fillColor = tinycolor(color)
 					.toHex();
-			let borderColor = tinycolor(color)
-					.darken(20)
-					.toHex();
 			let symbol = new SimpleFillSymbol();
 			symbol.color = new Color('#' + fillColor);
-			symbol.color.a = 0.5;
-			symbol.outline.color = new Color('#' + borderColor);
+			symbol.color.a = 0.75;
+			symbol.outline.color = new Color('#222222');
+			symbol.outline.color.a = 0.75;
+			symbol.outline.cap = 'square';
+			symbol.outline.join = 'round';
+			symbol.outline.width = 0.5;
 			renderer.addUniqueValueInfo(d.lga_name19, symbol);
 		});
-		let symbol = new SimpleFillSymbol();
-		symbol.color.a = 0;
-		symbol.outline.color = new Color('#000000');
-		symbol.outline.width = 1;
-		renderer.defaultSymbol = symbol;
 	}
 }

@@ -1,1 +1,7 @@
 @import 'https://js.arcgis.com/4.23/esri/themes/dark/main.css';
+
+
+
+::ng-deep .esri-view .esri-view-surface--inset-outline:focus:after {
+	outline : none !important;
+}
