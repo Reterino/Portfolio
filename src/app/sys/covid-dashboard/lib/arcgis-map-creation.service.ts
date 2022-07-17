@@ -5,17 +5,18 @@ import MapView                             from '@arcgis/core/views/MapView';
 import ScaleBar                            from '@arcgis/core/widgets/ScaleBar';
 import Home                                from '@arcgis/core/widgets/Home';
 import FeatureLayer                        from '@arcgis/core/layers/FeatureLayer';
-import { CovidDataLoaderService }          from './covid-data-loader.service';
-import SimpleFillSymbol                    from '@arcgis/core/symbols/SimpleFillSymbol';
-import Color                               from '@arcgis/core/Color';
-import SimpleRenderer                      from '@arcgis/core/renderers/SimpleRenderer';
-import UniqueValueRenderer                 from '@arcgis/core/renderers/UniqueValueRenderer';
-import * as tinycolor                      from 'tinycolor2';
-import * as d3                             from 'd3';
-import { BehaviorSubject }                 from 'rxjs';
-import Graphic                             from '@arcgis/core/Graphic';
-import Zoom                                from '@arcgis/core/widgets/Zoom';
-import { CovidTimeDataService }            from './covid-time-data.service';
+import { CovidDataLoaderService } from './covid-data-loader.service';
+import SimpleFillSymbol           from '@arcgis/core/symbols/SimpleFillSymbol';
+import Color                      from '@arcgis/core/Color';
+import SimpleRenderer             from '@arcgis/core/renderers/SimpleRenderer';
+import UniqueValueRenderer        from '@arcgis/core/renderers/UniqueValueRenderer';
+import * as tinycolor             from 'tinycolor2';
+import * as d3                    from 'd3';
+import { BehaviorSubject }        from 'rxjs';
+import Graphic                    from '@arcgis/core/Graphic';
+import Zoom                       from '@arcgis/core/widgets/Zoom';
+import { CovidTimeDataService }   from './covid-time-data.service';
+import { delay }                  from '../../../lib/utils/global-functions';
 
 
 
@@ -36,7 +37,9 @@ export class ArcgisMapCreationService {
 			private covidTimeDataSvc: CovidTimeDataService
 	) {
 		this.covidTimeDataSvc.currentDateData.subscribe(next => {
-			this.buildNextColors(next);
+			if (next.length > 0) {
+				this.buildNextColors(next);
+			}
 		});
 	}
 
@@ -102,15 +105,37 @@ export class ArcgisMapCreationService {
 		return num.toString();
 	}
 
-	public resetHighlight() {
+	public async resetHighlight() {
 		let stateLayer = this.mapView.map.layers.find(d => d.id === 'NSWLayer') as FeatureLayer;
-		stateLayer.renderer = this.buildRenderer();
+		stateLayer.renderer = await this.buildRenderer();
 	}
 
-	private colorData() {
+	private scaleMax(num: number): number {
+		if (num <= 5) {
+			return 10;
+		}
+		if (num <= 25) {
+			return 50;
+		}
+		if (num <= 70) {
+			return 100;
+		}
+		if (num <= 300) {
+			return 500;
+		}
+		if (num <= 600) {
+			return 1000;
+		}
+		if (num <= 5000) {
+			return 10000;
+		}
+		return Math.ceil(num / 10000) * 10000;
+	}
+
+	private async colorData() {
 		if (this.covidDataLdSvc.covidTotals.totalCases > 0) {
 			let stateLayer = this.mapView.map.layers.find(d => d.id === 'NSWLayer') as FeatureLayer;
-			stateLayer.renderer = this.buildRenderer();
+			stateLayer.renderer = await this.buildRenderer();
 		} else {
 			setTimeout(() => this.colorData(), 100);
 		}
@@ -133,32 +158,13 @@ export class ArcgisMapCreationService {
 		            });
 	}
 
-	scaleMax(num: number): number {
-		if (num <= 5) {
-			return 10;
-		}
-		if (num <= 25) {
-			return 50;
-		}
-		if (num <= 70) {
-			return 100;
-		}
-		if (num <= 300) {
-			return 500;
-		}
-		if (num <= 600) {
-			return 1000;
-		}
-		if (num <= 5000) {
-			return 10000;
-		}
-		return Math.ceil(num/10000)*10000;
-	}
-
-	private buildRenderer(data?: CovidLGATotalsIntf[]) {
+	private async buildRenderer(data?: CovidLGATotalsIntf[]) {
 		let renderer = new UniqueValueRenderer();
 		let max = 1;
 		if (!data) {
+			while (!this.covidDataLdSvc.covidTotals.lgaTotals) {
+				await delay(50);
+			}
 			data = this.covidDataLdSvc.covidTotals.lgaTotals;
 		}
 		data.forEach((d) => {
@@ -166,7 +172,7 @@ export class ArcgisMapCreationService {
 				max = d.cases;
 			}
 		});
-		max = this.scaleMax(max)
+		max = this.scaleMax(max);
 
 		let scale = d3.scaleLinear()
 		              .domain([ 1, max ])
@@ -198,11 +204,11 @@ export class ArcgisMapCreationService {
 		return renderer;
 	}
 
-	private buildNextColors(next: CovidLGATotalsIntf[]) {
+	private async buildNextColors(next: CovidLGATotalsIntf[]) {
 		if (this.mapView) {
 			let stateLayer = this.mapView.map.layers.find(d => d.id === 'NSWLayer') as FeatureLayer;
 			if (stateLayer) {
-				stateLayer.renderer = this.buildRenderer(next);
+				stateLayer.renderer = await this.buildRenderer(next);
 			} else {
 				setTimeout(() => this.buildNextColors(next), 100);
 			}
@@ -211,9 +217,9 @@ export class ArcgisMapCreationService {
 		}
 	}
 
-	private highlight(graphic: Graphic) {
+	private async highlight(graphic: Graphic) {
 		let stateLayer = this.mapView.map.layers.find(d => d.id === 'NSWLayer') as FeatureLayer;
-		let renderer = this.buildRenderer();
+		let renderer = await this.buildRenderer();
 		renderer.getUniqueValueInfo(graphic)
 		        .then(next => {
 			        let value = next.value;
@@ -236,10 +242,9 @@ export class ArcgisMapCreationService {
 		let svg = d3.select(svgBox);
 		svg.selectAll('*')
 		   .remove();
-
 		svg.append('g');
 
-		let initialColor = this.colorFn(0.5);
+		let initialColor = this.colorFn(0.4);
 		let middleColor = this.colorFn(0.75);
 		let finalColor = this.colorFn(1);
 

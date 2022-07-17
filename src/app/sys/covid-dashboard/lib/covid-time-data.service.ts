@@ -13,14 +13,14 @@ import { CovidLGATotalsIntf }     from './covid-types';
 export class CovidTimeDataService {
 
 	minDate = moment();
-	maxDate = moment('2001-01-01','YYYY-MM-DD');
+	maxDate = moment('2001-01-01', 'YYYY-MM-DD');
 
-	currentDate = moment();
+	currentDate = moment('Invalid Date');
 	currentDateData: BehaviorSubject<CovidLGATotalsIntf[]> = new BehaviorSubject<CovidLGATotalsIntf[]>([]);
 
 	lgaSet: string[] = [];
 
-	intervalRef: number = 0;
+	intervalRef: number | undefined = undefined;
 
 	constructor(
 			private covidDataLdSvc: CovidDataLoaderService
@@ -30,9 +30,31 @@ export class CovidTimeDataService {
 		});
 	}
 
+	public goToStart() {
+		this.currentDate = this.minDate;
+	}
+
+	public goToEnd() {
+		this.currentDate = this.maxDate;
+	}
+
+	public startTimeline() {
+		console.log(this.currentDate,this.maxDate,this.currentDate.diff(this.maxDate,'days'))
+		if (Math.abs(this.currentDate.diff(this.maxDate,'days')) < 1) {
+			this.currentDate = this.minDate;
+		}
+		this.nextDay();
+		this.intervalRef = setInterval(() => this.nextDay(), 1000);
+	}
+
+	public pauseTimeline() {
+		clearInterval(this.intervalRef);
+		this.intervalRef = undefined;
+	}
+
 	private initTimeSeries() {
 		this.covidDataLdSvc.covidByLocationData.forEach(d => {
-			let date = moment(d.notification_date,'YYYY-MM-DD');
+			let date = moment(d.notification_date, 'YYYY-MM-DD');
 			if (date.diff(this.minDate) < 0) {
 				this.minDate = date;
 			}
@@ -45,13 +67,11 @@ export class CovidTimeDataService {
 		this.currentDate = this.maxDate;
 	}
 
-	private startFromBeginning() {
-		this.currentDate = moment('2020-03-01', 'YYYY-MM-DD');
-		this.nextDay();
-		this.intervalRef = setInterval(() => this.nextDay(), 1000);
-	}
-
 	private nextDay() {
+		if (Math.abs(this.currentDate.diff(this.maxDate,'days')) < 1) {
+			this.pauseTimeline();
+			return;
+		}
 		this.currentDate.add(1, 'days');
 
 		let filteredData = this.covidDataLdSvc.covidByLocationData.filter(d => d.notification_date === this.currentDate.format('YYYY-MM-DD'));

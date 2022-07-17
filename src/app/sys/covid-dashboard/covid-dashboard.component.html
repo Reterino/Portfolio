@@ -21,13 +21,16 @@
 								<!-- Controls & Current Date -->
 								<div class="w-36 h-full flex flex-col justify-center items-center">
 										<div class="flex justify-center items-center w-full h-1/2 text-neutral-200">
-												<button mat-icon-button>
+												<button mat-icon-button (click)="covidTimeDataSvc.goToStart()">
 														<mat-icon>skip_previous</mat-icon>
 												</button>
-												<button mat-icon-button>
+												<button *ngIf="covidTimeDataSvc.intervalRef" mat-icon-button (click)="covidTimeDataSvc.pauseTimeline()">
+														<mat-icon>pause_circle</mat-icon>
+												</button>
+												<button *ngIf="!covidTimeDataSvc.intervalRef" mat-icon-button (click)="covidTimeDataSvc.startTimeline()">
 														<mat-icon>play_arrow</mat-icon>
 												</button>
-												<button mat-icon-button>
+												<button mat-icon-button (click)="covidTimeDataSvc.goToEnd()">
 														<mat-icon>skip_next</mat-icon>
 												</button>
 										</div>
