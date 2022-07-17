@@ -5,6 +5,7 @@ import * as moment                              from 'moment';
 import { ChartWrapper, ChartWrapperIntf }       from '../../../lib/types/lib-types';
 import { ChartBuilderService }                  from '../../../lib/utils/chart-builder.service';
 import { UiThemeService }                       from '../../../lib/utils/ui-theme.service';
+import { CovidTimeDataService }                 from './covid-time-data.service';
 
 
 
@@ -73,6 +74,7 @@ export class CovidChartService {
 	constructor(
 			private covidDataSvc: CovidDataLoaderService,
 			private chartBuilderSvc: ChartBuilderService,
+			private covidTimeDataSvc: CovidTimeDataService,
 			private uiThemeSvc: UiThemeService
 	) {
 		this.modifyChartOptions();
@@ -174,5 +176,8 @@ export class CovidChartService {
 				tension: 1
 			}
 		};
+		casesTotal.options.onClick = ((event,activeElement,_) => {
+			this.covidTimeDataSvc.changeTimeByChartClick(event, activeElement)
+		})
 	}
 }

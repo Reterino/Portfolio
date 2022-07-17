@@ -272,7 +272,7 @@ export class ArcgisMapCreationService {
 		                      .attr('y', yStart + (legendItemHeight / 2))
 		                      .attr('text-anchor', 'end')
 		                      .attr('font-size', 10)
-		                      .attr('class', 'font-mono font-light fill-current text-neutral-200')
+		                      .attr('class', 'font-mono font-light fill-current text-neutral-400')
 		                      .attr('dominant-baseline', 'middle')
 		                      .text(this.formatNumber(min));
 
@@ -281,16 +281,16 @@ export class ArcgisMapCreationService {
 		                    .attr('y', yStart + (legendItemHeight / 2))
 		                    .attr('text-anchor', 'start')
 		                    .attr('font-size', 10)
-		                    .attr('class', 'font-mono font-light fill-current text-neutral-200')
+		                    .attr('class', 'font-mono font-light fill-current text-neutral-400')
 		                    .attr('dominant-baseline', 'middle')
 		                    .text(this.formatNumber(max));
 
 		const titleTextG = svg.append('text')
-		                      .attr('x', (endTextSize + startTextSize + (legendItemWidth * 20)) / 2)
+		                      .attr('x', leftPadding + startTextSize + ((legendItemWidth * 20) / 2))
 		                      .attr('y', yStart - titleTextPadding)
 		                      .attr('text-anchor', 'middle')
 		                      .attr('font-size', 10)
-		                      .attr('class', 'font-mono font-light fill-current text-neutral-200')
+		                      .attr('class', 'font-mono font-light fill-current text-neutral-300')
 		                      .attr('dominant-baseline', 'middle')
 		                      .text('Covid Cases');
 

@@ -2,6 +2,7 @@ import { EventEmitter, Injectable }                                             
 import { HttpClient }                                                                                                        from '@angular/common/http';
 import { CovidByAgeDailyIntf, CovidByLocationDailyIntf, CovidDeathsIntf, CovidTotalsData, CovidTotalsDataIntf, LGAInfoIntf } from './covid-types';
 import { Papa }                                                                                                              from 'ngx-papaparse';
+import * as moment                                                                                                           from 'moment';
 
 
 
@@ -10,6 +11,9 @@ import { Papa }                                                                 
 	            providedIn: 'root'
             })
 export class CovidDataLoaderService {
+	public minDate = moment();
+	public maxDate = moment('2001-01-01', 'YYYY-MM-DD');
+	public lgaSet: string[] = [];
 
 	public lgaNSWInfo: LGAInfoIntf[] = [];
 	public covidByAgeData: CovidByAgeDailyIntf[] = [];
@@ -128,10 +132,13 @@ export class CovidDataLoaderService {
 				keys.forEach(key => {
 					let val = Number(d[key]);
 					this.covidTotals.totalCases += val;
-					// @ts-ignore
-					this.covidTotals[key as keyof CovidTotalsDataIntf] += val;
+					//@ts-ignore
+					this.covidTotals[key as keyof CovidTotalsDataIntf] += val as number;
 				});
 			});
+
+			this.initTimeSeries();
+
 			this.covidByLocationData.forEach(d => {
 				let index = this.covidTotals.lgaTotals.findIndex(l => l.lga_code19 === d.lga_code19);
 				if (index === -1) {
@@ -154,9 +161,39 @@ export class CovidDataLoaderService {
 				}
 			});
 			this.covidTotals.lgaTotals.sort((a, b) => a.lga_name19.localeCompare(b.lga_name19));
+
+			let currDate = this.minDate.clone();
+			while (currDate.diff(this.maxDate, 'days') < 0) {
+				let data = this.covidTotals.dailyTotals.find(d => d.notification_date === currDate.format('YYYY-MM-DD'));
+				if (!data) {
+					this.covidTotals.dailyTotals.push({
+						                                  notification_date: currDate.format('YYYY-MM-DD'),
+						                                  cases            : 0
+					                                  });
+				}
+				currDate.add(1, 'days');
+			}
+			this.covidTotals.dailyTotals.sort((a, b) => {
+				return moment(a.notification_date, 'YYYY-MM-DD')
+						.diff(moment(b.notification_date, 'YYYY-MM-DD'));
+			});
 			this.dataLoaded.emit();
 		} else {
 			setTimeout(() => this.parseCovidData(), 250);
 		}
+	}
+
+	private initTimeSeries() {
+		this.covidByLocationData.forEach(d => {
+			let date = moment(d.notification_date, 'YYYY-MM-DD');
+			if (date.diff(this.minDate) < 0) {
+				this.minDate = date;
+			}
+			if (date.diff(this.maxDate) > 0) {
+				this.maxDate = date;
+			}
+			this.lgaSet.push(d.lga_name19);
+		});
+		this.lgaSet = Array.from(new Set(this.lgaSet));
 	}
 }
