@@ -41,10 +41,6 @@ module.exports = {
 			fuchsia    : colors.fuchsia,
 			pink       : colors.pink,
 			rose       : colors.rose,
-			rag0       : colors.zinc,
-			rag1       : colors.green,
-			rag2       : colors.amber,
-			rag3       : colors.red
 		}),
 		columns                 : {
 			auto : 'auto',

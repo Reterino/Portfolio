@@ -67,7 +67,6 @@ export class CovidDataLoaderService {
 			complete: (result) => {
 				this.covidByAgeData = result.data;
 				this.covidByAgeData = this.covidByAgeData.filter(d => !!d.notification_date);
-				this.parseCovidData();
 			}
 		});
 		let covidByLocationFormatted = 'assets/data/covidByLocationFormatted.csv';
@@ -77,7 +76,6 @@ export class CovidDataLoaderService {
 			complete: (result) => {
 				this.covidByLocationData = result.data;
 				this.covidByLocationData = this.covidByLocationData.filter(d => !!d.notification_date);
-				this.parseCovidData();
 			}
 		});
 		let covidDeathsNSW = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
@@ -86,13 +84,31 @@ export class CovidDataLoaderService {
 			header  : true,
 			complete: (result) => {
 				this.covidDeathsNSW = (result.data as CovidDeathsIntf[]).filter(d => d['Province/State'] === 'New South Wales');
-				this.parseCovidData();
 			}
 		});
+		this.parseCovidData();
+	}
+
+	private checkAllDataLoaded() {
+		let response = true;
+		if (this.lgaNSWInfo.length === 0) {
+			response = false;
+		}
+		if (this.covidByAgeData.length === 0) {
+			response = false;
+		}
+		if (this.covidByLocationData.length === 0) {
+			response = false;
+		}
+		if (this.covidDeathsNSW.length === 0) {
+			response = false;
+		}
+		return response;
 	}
 
 	private parseCovidData() {
-		if (this.covidByAgeData.length > 0 && this.covidByLocationData.length > 0) {
+		if (this.checkAllDataLoaded()) {
+
 			this.covidByAgeData.forEach(d => {
 				let keys: (keyof CovidByAgeDailyIntf)[] = [
 					'AgeGroup_0-19',
@@ -139,6 +155,8 @@ export class CovidDataLoaderService {
 			});
 			this.covidTotals.lgaTotals.sort((a, b) => a.lga_name19.localeCompare(b.lga_name19));
 			this.dataLoaded.emit();
+		} else {
+			setTimeout(() => this.parseCovidData(), 250);
 		}
 	}
 }

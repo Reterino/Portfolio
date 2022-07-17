@@ -1,0 +1,106 @@
+<div class="w-full h-full flex flex-col">
+		<div class="h-12 w-full flex border-b border-neutral-700 bg-neutral-900 divide-x divide-neutral-700">
+				<!-- Cases -->
+				<div class="w-1/2 h-full flex justify-center items-center text-lg font-bold text-neutral-400">
+						<span class="font-normal text-neutral-500 pr-0.5">Cases:</span> {{mapTooltipSvc.kpiTickers[0].value}}
+				</div>
+
+				<!-- Deaths -->
+				<div class="w-1/2 h-full flex justify-center items-center text-lg font-bold text-neutral-400">
+						<span class="font-normal text-neutral-500 pr-0.5">Deaths:</span> {{mapTooltipSvc.kpiTickers[1].value}}
+				</div>
+		</div>
+
+		<!-- Title bar -->
+		<div class="h-8 w-full border-b border-neutral-700 bg-neutral-900 flex text-neutral-400">
+				<div *ngIf="mapTooltipSvc.clickedLGAName" (click)="mapTooltipSvc.reset()" class="overflow-hidden w-8 h-8 flex justify-center items-center border-r border-neutral-700">
+						<button mat-icon-button>
+								<mat-icon>cancel</mat-icon>
+						</button>
+				</div>
+				<div class="flex-1 h-full flex pl-1 items-center truncate" [ngClass]="mapTooltipSvc.clickedLGAName ? '' : 'justify-center'">
+						{{mapTooltipSvc.clickedLGAName || 'Whole of NSW'}}
+				</div>
+				<div *ngIf="mapTooltipSvc.clickedLGAName" class="h-full flex items-center text-xs text-neutral-600">
+						<div class="px-4">LGA Data</div>
+						<div class="pr-1">NSW Data</div>
+				</div>
+		</div>
+
+		<!-- Content Box -->
+		<div class="w-full flex-1 flex flex-col">
+				<div class="w-full flex-1 flex relative overflow-scroll">
+						<div class="h-full absolute flex flex-col justify-between py-1 px-2" [ngClass]="mapTooltipSvc.clickedLGAName ? 'w-[calc(100%-4.25rem)]' : 'w-full'">
+								<!-- Demographic Info -->
+								<div class="flex flex-col w-full">
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="4,736"
+										                           title="Population"
+										                           [titleBold]="true"></app-map-tooltip-info-line>
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="60"
+										                           title="Median Age"
+										                           [titleBold]="true"></app-map-tooltip-info-line>
+								</div>
+
+								<!-- Covid Case Info -->
+								<div class="flex flex-col w-full">
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="2,500"
+										                           title="Total Cases"
+										                           [titleBold]="true"></app-map-tooltip-info-line>
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="527.8"
+										                           title="(per 1,000 people)"
+										                           [titleBold]="false"></app-map-tooltip-info-line>
+								</div>
+								<div class="flex flex-col w-full">
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="301"
+										                           title="Active Cases"
+										                           [titleBold]="true"></app-map-tooltip-info-line>
+										<app-map-tooltip-info-line class="w-full h-6"
+										                           value="63.6"
+										                           title="(per 1,000 people)"
+										                           [titleBold]="false"></app-map-tooltip-info-line>
+								</div>
+						</div>
+
+						<!-- Whole NSW Data, when LGA clicked -->
+						<div *ngIf="mapTooltipSvc.clickedLGAName" class="w-16 h-full absolute right-0 flex flex-col justify-between py-1 px-2 border-l border-neutral-700">
+								<div class="flex flex-col w-full">
+										<!-- NSW Population -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												4,607k
+										</div>
+										<!-- NSW Median Age -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												60
+										</div>
+								</div>
+
+								<!-- Covid Case Info -->
+								<div class="flex flex-col w-full">
+										<!-- NSW Total Cases -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												4,607k
+										</div>
+										<!-- NSW Total Cases Per 1,000 -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												4,607k
+										</div>
+								</div>
+								<div class="flex flex-col w-full">
+										<!-- NSW Active Cases -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												4,607k
+										</div>
+										<!-- NSW Active Cases Per 1,000 -->
+										<div class="h-6 text-sm text-neutral-600 text-right">
+												0.25
+										</div>
+								</div>
+						</div>
+				</div>
+		</div>
+</div>

@@ -1,4 +1,4 @@
-<div class="w-full h-full flex flex-col divide-y divide-neutral-600">
+<div class="w-full h-full flex flex-col divide-y divide-neutral-700">
 		<div class="w-full h-6 flex items-center bg-neutral-900">
 				<div class="font-medium text-sm text-neutral-400 pl-2 truncate">
 						{{title}}
@@ -7,12 +7,12 @@
 						{{descr}}
 				</div>
 		</div>
-		<div class="w-full flex-1 relative flex">
+		<div class="w-full flex-1 relative flex pr-0.5">
 				<app-chart class="w-full h-full"
-				[type]="type"
-				[datasets]="datasets"
-				[options]="options"
-				[labels]="labels">
+				           [type]="type"
+				           [datasets]="datasets"
+				           [options]="options"
+				           [labels]="labels">
 				</app-chart>
 		</div>
 </div>

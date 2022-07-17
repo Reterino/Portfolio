@@ -27,7 +27,6 @@ export class ChartComponent implements OnInit, OnChanges, AfterViewInit {
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		console.log(changes);
 		if (this.chartObj) {
 			if (changes['labels']) {
 				this.chartObj.data.labels = this.labels;

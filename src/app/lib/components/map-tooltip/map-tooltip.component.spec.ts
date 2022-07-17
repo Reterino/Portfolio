@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KpiTickerComponent } from './kpi-ticker.component';
+import { MapTooltipComponent } from './map-tooltip.component';
 
-describe('KpiTickerComponent', () => {
-  let component: KpiTickerComponent;
-  let fixture: ComponentFixture<KpiTickerComponent>;
+describe('MapTooltipComponent', () => {
+  let component: MapTooltipComponent;
+  let fixture: ComponentFixture<MapTooltipComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KpiTickerComponent ]
+      declarations: [ MapTooltipComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(KpiTickerComponent);
+    fixture = TestBed.createComponent(MapTooltipComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

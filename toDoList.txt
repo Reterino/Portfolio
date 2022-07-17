@@ -1,8 +1,5 @@
 TODO: To-do List:
-1. Get Map Tooltips working with a custom tooltip
-2. Style the charts
-3. Consider ways to implement the bottom chart as a sort of media player for the time of the data
-4. Consider any other charts
-5. KPIs - top middle
-6. Menu stuff - top right corner
-7. Title - top left corner
+- Get map tooltips working with data
+	- Focus first on Whole of NSW data, then LGA data
+- Fix padding on charts on left, charts should be at the bottom of the boxes
+- Consider ways to implement the bottom chart as a sort of media player for the time of the data

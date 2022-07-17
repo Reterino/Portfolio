@@ -1,0 +1,106 @@
+<div class="w-full h-full relative flex flex-col">
+		<div class="w-full flex-1 grid grid-cols-4 divide-x divide-neutral-700">
+				<!-- Main content div -->
+				<div class="col-span-3 w-full h-full flex flex-col">
+						<!-- Header div -->
+						<div class="flex w-full h-12 bg-neutral-900 border-b border-neutral-700 divide-x divide-neutral-700">
+								<!-- Title -->
+								<div class="h-full w-auto flex justify-center items-center py-2 pr-4 pl-2 text-neutral-400 font-sans" [innerHTML]="title">
+								</div>
+
+								<!-- Instructions -->
+								<div class="flex-1 h-full flex flex-col justify-center items-center text-neutral-400 font-sans text-sm">
+										<div>
+												Use the following buttons to control the timeline:
+										</div>
+										<div class="text-neutral-600 text-xs">
+												Or click along the line-chart at the bottom!
+										</div>
+								</div>
+
+								<!-- Controls & Current Date -->
+								<div class="w-36 h-full flex flex-col justify-center items-center">
+										<div class="flex justify-center items-center w-full h-1/2 text-neutral-200">
+												<button mat-icon-button>
+														<mat-icon>skip_previous</mat-icon>
+												</button>
+												<button mat-icon-button>
+														<mat-icon>play_arrow</mat-icon>
+												</button>
+												<button mat-icon-button>
+														<mat-icon>skip_next</mat-icon>
+												</button>
+										</div>
+										<div class="flex justify-center items-center w-full h-1/2 text-neutral-400 border-t border-neutral-700">
+												{{covidTimeDataSvc.currentDate.format('ll')}}
+										</div>
+								</div>
+						</div>
+
+						<!-- Map Container -->
+						<div class="relative w-full flex-1">
+								<div class="absolute w-full h-full" #MapNode></div>
+								<div class="absolute bottom-0 left-2 z-10 pointer-events-none">
+										<svg id="MapColorScale" class="map-color-scale"></svg>
+								</div>
+						</div>
+				</div>
+
+
+				<!-- Sidebar Container -->
+				<div class="flex flex-col col-span-1 w-full h-full bg-neutral-800 divide-y divide-neutral-700">
+						<div class="w-full h-72">
+								<app-map-tooltip>
+								</app-map-tooltip>
+						</div>
+
+						<div class="w-full h-8 flex justify-center items-center bg-neutral-900">
+								<div class="font-medium text-sm text-neutral-400 pl-2 truncate">
+										Charts for All NSW Data
+								</div>
+						</div>
+
+						<!-- Charts -->
+						<div class="w-full flex-1 flex flex-col divide-y divide-neutral-700">
+
+								<app-chart-wrapper *ngFor="let chart of covidChartSvc.covidCharts; first as first; last as last"
+								                   [id]="chart.title"
+								                   [ngClass]="last ? 'flex-1' : 'h-[40%]'"
+								                   [type]="chart.type"
+								                   [datasets]="chart.dataset"
+								                   [labels]="chart.labels"
+								                   [options]="chart.options"
+								                   [title]="chart.title"
+								                   [descr]="chart.descr">
+								</app-chart-wrapper>
+						</div>
+				</div>
+		</div>
+
+		<div class="flex w-full h-12 border-t border-neutral-700 divide-x divide-neutral-700">
+				<app-chart class="flex-1 h-full bg-neutral-800"
+				           [type]="covidChartSvc.covidTotalChart.type"
+				           [datasets]="covidChartSvc.covidTotalChart.dataset"
+				           [labels]="covidChartSvc.covidTotalChart.labels"
+				           [options]="covidChartSvc.covidTotalChart.options">
+				</app-chart>
+		</div>
+
+		<div class="flex items-center justify-between px-2 w-full h-8 bg-neutral-900 text-xs border-t border-neutral-700">
+				<div class="text-neutral-200 font-mono">
+						Copyright &copy; {{date | date:'yyyy'}} Nicholas King
+				</div>
+				<div class="text-neutral-400 font-sans">
+						Data courtesy of
+						<a class="px-1 underline cursor-pointer" href="https://data.gov.au/organisations/org-nsw-015152b6-7d96-4a44-bccc-4c36750ca8ed">NSW Ministry of Health</a>
+				</div>
+				<div class="w-auto flex flex-col">
+						<div class="w-full text-neutral-400 font-sans text-2xs leading-none flex justify-end">
+								Covid death data is live.
+						</div>
+						<div class="text-neutral-400 font-sans text-2xs leading-none flex text-right">
+								Covid cases data updated as of {{dataUpdated | date: 'mediumDate'}}.
+						</div>
+				</div>
+		</div>
+</div>

@@ -1,0 +1,11 @@
+<div class="w-full flex items-center justify-between">
+		<div class="text-sm text-neutral-400" [ngClass]="titleBold ? 'font-bold' : 'font-normal'">
+				{{title}}
+		</div>
+		<div class="flex items-center justify-between w-auto">
+				<i *ngIf="icon" class="fa text-base pr-1" [ngClass]="'fa-' + icon + ' text-' + iconColor + '-600'"></i>
+				<div class="text-sm" [ngClass]="[valueBold ? 'font-bold' : 'font-normal',textColor ? 'text-' + textColor + '-600' : 'text-neutral-400']">
+						{{value}}
+				</div>
+		</div>
+</div>

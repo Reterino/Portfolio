@@ -1,7 +1,7 @@
 import { NgModule }                from '@angular/core';
 import { RouterModule, Routes }    from '@angular/router';
 import { SysComponent }            from './sys/sys.component';
-import { CovidDashboardComponent } from './sys/tab/covid-dashboard/covid-dashboard.component';
+import { CovidDashboardComponent } from './sys/covid-dashboard/covid-dashboard.component';
 
 
 
@@ -21,7 +21,7 @@ const routes: Routes = [
 				component: CovidDashboardComponent
 			},
 			{
-				path      : '',
+				path      : '**',
 				redirectTo: 'map',
 				pathMatch : 'full'
 			},

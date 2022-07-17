@@ -1,4 +1,4 @@
-import { RAGColorType } from '../../../../lib/types/lib-types';
+import { RAGColorType } from '../../../lib/types/lib-types';
 
 
 
